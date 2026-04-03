@@ -1,0 +1,88 @@
+{
+  "providers": {
+    "claude": {
+      "linux-x64": {
+        "url": "https://example.com/claude/linux-x64/claude.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/claude"
+      },
+      "linux-arm64": {
+        "url": "https://example.com/claude/linux-arm64/claude.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/claude"
+      },
+      "darwin-x64": {
+        "url": "https://example.com/claude/darwin-x64/claude.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/claude"
+      },
+      "darwin-arm64": {
+        "url": "https://example.com/claude/darwin-arm64/claude.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/claude"
+      },
+      "win-x64": {
+        "url": "https://example.com/claude/win-x64/claude.zip",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "claude.exe"
+      }
+    },
+    "codex": {
+      "linux-x64": {
+        "url": "https://example.com/codex/linux-x64/codex.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/codex"
+      },
+      "linux-arm64": {
+        "url": "https://example.com/codex/linux-arm64/codex.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/codex"
+      },
+      "darwin-x64": {
+        "url": "https://example.com/codex/darwin-x64/codex.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/codex"
+      },
+      "darwin-arm64": {
+        "url": "https://example.com/codex/darwin-arm64/codex.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/codex"
+      },
+      "win-x64": {
+        "url": "https://example.com/codex/win-x64/codex.zip",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "codex.exe"
+      }
+    },
+    "opencode": {
+      "linux-x64": {
+        "url": "https://example.com/opencode/linux-x64/opencode.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/opencode"
+      },
+      "linux-arm64": {
+        "url": "https://example.com/opencode/linux-arm64/opencode.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/opencode"
+      },
+      "darwin-x64": {
+        "url": "https://example.com/opencode/darwin-x64/opencode.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/opencode"
+      },
+      "darwin-arm64": {
+        "url": "https://example.com/opencode/darwin-arm64/opencode.tar.gz",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "bin/opencode"
+      },
+      "win-x64": {
+        "url": "https://example.com/opencode/win-x64/opencode.zip",
+        "sha256": "REPLACE_WITH_REAL_SHA256",
+        "binaryPath": "opencode.exe"
+      }
+    },
+    "openclaw": {
+      "enabled": false
+    }
+  }
+}

@@ -12,7 +12,18 @@
     "clean": "pnpm run -r clean",
     "dev:server": "pnpm --filter @usb-ai-workbench/server dev",
     "dev:web": "pnpm --filter @usb-ai-workbench/web dev",
-    "start": "pnpm --filter @usb-ai-workbench/server start"
+    "start": "pnpm --filter @usb-ai-workbench/server start",
+    "portable:fetch-runtime": "tsx scripts/fetch-runtime.ts",
+    "portable:fetch-providers": "tsx scripts/fetch-providers.ts",
+    "portable:verify": "tsx scripts/verify-downloads.ts",
+    "portable:build-bundle": "tsx scripts/build-portable-bundle.ts",
+    "portable:package": "tsx scripts/package-portable.ts",
+    "portable:build": "pnpm portable:fetch-runtime && pnpm portable:fetch-providers && pnpm portable:verify && pnpm portable:build-bundle && pnpm portable:package",
+    "portable:launch": "tsx scripts/launch-portable.ts"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "tsx": "^4.20.6"
   },
   "engines": {
     "node": ">=20.0.0",

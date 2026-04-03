@@ -1,0 +1,43 @@
+server:
+  port: 4000
+  host: "127.0.0.1"
+  logLevel: "info"
+
+frontend:
+  port: 5173
+
+engines:
+  claude:
+    enabled: true
+    command: "claude"
+    args: []
+    timeout: 300000
+  codex:
+    enabled: true
+    command: "codex"
+    args: []
+    timeout: 300000
+  opencode:
+    enabled: true
+    command: "opencode"
+    args: []
+    timeout: 300000
+  openclaw:
+    enabled: false
+    command: "openclaw"
+    args: []
+    timeout: 300000
+    stub: true
+
+scheduler:
+  enabled: true
+  concurrency: 2
+
+storage:
+  maxLogSizeBytes: 104857600
+  maxRunArtifacts: 100
+
+security:
+  allowedOrigins:
+    - "http://localhost:5173"
+    - "http://127.0.0.1:5173"

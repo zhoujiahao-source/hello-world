@@ -19,6 +19,8 @@ pnpm portable:verify
 pnpm portable:build-bundle
 pnpm portable:package
 pnpm portable:smoke
+pnpm portable:doctor -- --bundle-dir dist-portable --target linux-x64
+pnpm portable:smoke-final -- --bundle-dir dist-portable --target linux-x64
 ```
 
 Artifacts:
@@ -62,3 +64,20 @@ In restricted sandbox/CI policy environments, native build scripts may be blocke
 This is a **build environment policy limitation**, not an architecture defect of the application.
 
 In build environments that allow native builds, final portable smoke validation should pass.
+
+## Doctor Script Flags
+
+`pnpm portable:doctor -- [options]`
+
+- `--target <target>`: override target auto-detection
+- `--bundle-dir <dir>`: set bundle root/dist directory (default `dist-portable`)
+- `--json`: machine-readable output
+
+## Final Smoke Script
+
+`pnpm portable:smoke-final -- [options]`
+
+- validates manifest + artifact presence
+- resolves bundled Node fallback behavior
+- performs short launch probe in portable mode
+- supports `--bundle-dir`, `--target`, `--json`

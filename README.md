@@ -50,6 +50,8 @@ pnpm portable:verify
 pnpm portable:build-bundle
 pnpm portable:package
 pnpm portable:smoke
+pnpm portable:doctor -- --bundle-dir dist-portable --target linux-x64
+pnpm portable:smoke-final -- --bundle-dir dist-portable --target linux-x64
 ```
 
 More details: [docs/PORTABLE_BUNDLE.md](docs/PORTABLE_BUNDLE.md)

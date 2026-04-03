@@ -7,6 +7,7 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -68,6 +69,42 @@ for (const engine of ["claude", "codex", "opencode"]) {
     return "found in PATH";
   });
 }
+
+// Portable runtime
+warn("portable manifest", () => {
+  const manifestPath = path.join(APP_ROOT, "dist-portable", "manifest.json");
+  if (!fs.existsSync(manifestPath)) throw new Error("dist-portable/manifest.json not found");
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as { target?: string; knownLimitations?: string[] };
+  return `target=${manifest.target ?? "unknown"}`;
+});
+
+warn("portable target runtime dir", () => {
+  const platform = os.platform();
+  const arch = os.arch();
+  const target =
+    platform === "linux" && arch === "x64"
+      ? "linux-x64"
+      : platform === "linux" && arch === "arm64"
+      ? "linux-arm64"
+      : platform === "darwin" && arch === "x64"
+      ? "darwin-x64"
+      : platform === "darwin" && arch === "arm64"
+      ? "darwin-arm64"
+      : platform === "win32" && arch === "x64"
+      ? "win-x64"
+      : null;
+  if (!target) throw new Error("unsupported host target");
+  const runtimeDir = path.join(APP_ROOT, "portable", "targets", target, "runtime");
+  if (!fs.existsSync(runtimeDir)) throw new Error(`missing runtime dir: ${runtimeDir}`);
+  return runtimeDir;
+});
+
+warn("native-build policy", () => {
+  if (process.env.PNPM_IGNORE_SCRIPTS === "true" || process.env.npm_config_ignore_scripts === "true") {
+    throw new Error("native build scripts are blocked in current environment");
+  }
+  return "native build scripts appear allowed";
+});
 
 // API keys
 warn("ANTHROPIC_API_KEY", () => {

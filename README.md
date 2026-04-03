@@ -40,3 +40,16 @@ pnpm dev
 ```bash
 pnpm build
 ```
+
+## Portable Distribution Build
+
+```bash
+pnpm portable:fetch-runtime
+pnpm portable:fetch-providers
+pnpm portable:verify
+pnpm portable:build-bundle
+pnpm portable:package
+pnpm portable:smoke
+```
+
+More details: [docs/PORTABLE_BUNDLE.md](docs/PORTABLE_BUNDLE.md)

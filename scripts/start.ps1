@@ -10,10 +10,12 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $AppRoot = Split-Path -Parent $ScriptDir
 
 $env:APP_ROOT = $AppRoot
+$env:APP_BUNDLE_ROOT = $AppRoot
 $env:APP_DATA_DIR = if ($env:APP_DATA_DIR) { $env:APP_DATA_DIR } else { Join-Path $AppRoot "portable-data" }
 $env:APP_PORT = if ($env:APP_PORT) { $env:APP_PORT } else { $Port }
 $env:VITE_PORT = if ($env:VITE_PORT) { $env:VITE_PORT } else { $VitePort }
 $env:VITE_API_BASE_URL = "http://localhost:$($env:APP_PORT)"
+$env:APP_RUNTIME_MODE = "portable"
 
 Write-Host "==================================="
 Write-Host "  USB AI Workbench (Portable)"

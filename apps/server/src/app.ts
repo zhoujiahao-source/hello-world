@@ -12,7 +12,7 @@ import { logRoutes } from "./routes/logs.js";
 import { configRoutes } from "./routes/config.js";
 import { AppError } from "./utils/errors.js";
 import fastifyStatic from "@fastify/static";
-import path from "node:path";
+import { resolveWebDistPath } from "./runtime.js";
 
 export function createApp() {
   const config = getConfig();
@@ -23,7 +23,7 @@ export function createApp() {
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   });
 
-  const webDistDir = process.env.APP_WEB_DIST_DIR ?? path.join(process.cwd(), "apps", "web", "dist");
+  const webDistDir = resolveWebDistPath();
   app.register(fastifyStatic, {
     root: webDistDir,
     prefix: "/",

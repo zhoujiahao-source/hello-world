@@ -29,12 +29,22 @@ export async function discoverAllEngines(): Promise<Engine[]> {
     try {
       const status = await adapter.discover();
       const resolved = resolveProviderCommand(adapter.kind);
+      const validation = await adapter.validate();
       const engine = upsertEngine(adapter.kind, {
         name: kind,
         version: status.version,
         executablePath: status.executablePath ?? resolved.command,
         health: status.health,
         enabled: engineConfig.enabled,
+        metadata: {
+          providerSource: resolved.source,
+          bundledPath: resolved.bundledPath,
+          overridePath: resolved.overridePath,
+          pathFallbackAllowed: resolved.pathFallbackAllowed,
+          warnings: resolved.warnings,
+          validation,
+          openClawMvpDisabled: adapter.kind === "openclaw",
+        },
       });
       results.push(engine);
       logger.info("Engine discovered", { kind, health: status.health, providerSource: resolved.source });

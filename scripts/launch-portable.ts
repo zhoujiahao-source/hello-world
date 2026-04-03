@@ -10,6 +10,10 @@ const appRoot = process.env.APP_ROOT ? path.resolve(process.env.APP_ROOT) : path
 const appDataDir = process.env.APP_DATA_DIR ?? path.join(appRoot, "portable-data");
 const appPort = process.env.APP_PORT ?? "4000";
 
+function resolveManifestPath(): string {
+  return path.join(appRoot, "manifest.json");
+}
+
 function detectTarget(): string {
   const platform = os.platform();
   const arch = os.arch();
@@ -45,6 +49,7 @@ function resolveBundledNode(target: string): string | null {
 
 function main() {
   const target = detectTarget();
+  const manifestPath = resolveManifestPath();
   const bundledNode = resolveBundledNode(target);
   const nodeCommand = bundledNode ?? process.execPath;
   const serverEntryCandidates = [
@@ -71,6 +76,9 @@ function main() {
       APP_BUNDLED_TARGET_ROOT: path.join(appRoot, "target"),
       APP_BUNDLED_PROVIDERS_ROOT: path.join(appRoot, "target", "providers"),
       APP_WEB_DIST_DIR: path.join(appRoot, "app", "web"),
+      APP_MANIFEST_PATH: manifestPath,
+      APP_BUNDLE_ROOT: appRoot,
+      APP_RUNTIME_MODE: "portable",
     },
   });
 

@@ -1,14 +1,11 @@
 import path from "node:path";
 import fs from "node:fs";
+import { resolveBundleRoot, resolvePortableDataDir } from "./runtime.js";
 
 // APP_ROOT is set by start scripts; fallback to project root
-const APP_ROOT = process.env.APP_ROOT
-  ? path.resolve(process.env.APP_ROOT)
-  : path.resolve(process.cwd());
+const APP_ROOT = resolveBundleRoot();
 
-const APP_DATA_DIR = process.env.APP_DATA_DIR
-  ? path.resolve(process.env.APP_DATA_DIR)
-  : path.join(APP_ROOT, "portable-data");
+const APP_DATA_DIR = resolvePortableDataDir();
 
 export const appRoot = APP_ROOT;
 export const dataDir = APP_DATA_DIR;

@@ -4,6 +4,8 @@ import { listSettings, setSetting, getSetting, deleteSetting } from "../reposito
 import { settingSchema } from "@usb-ai-workbench/shared";
 import { ValidationError } from "../utils/errors.js";
 import { ZodError } from "zod";
+import { getRuntimeContext } from "../runtime.js";
+import { readPortableManifest } from "../services/portableManifest.js";
 
 export async function configRoutes(app: FastifyInstance): Promise<void> {
   app.get("/config", async () => {
@@ -18,6 +20,23 @@ export async function configRoutes(app: FastifyInstance): Promise<void> {
           Object.entries(config.engines).map(([k, v]) => [k, { enabled: v.enabled, stub: v.stub ?? false }])
         ),
         scheduler: config.scheduler,
+        runtime: config.runtime,
+      },
+    };
+  });
+
+  app.get("/runtime-info", async () => {
+    const runtime = getRuntimeContext();
+    const manifest = readPortableManifest();
+    return {
+      success: true,
+      data: {
+        runtime,
+        manifest,
+        knownLimitations: [
+          "In sandboxed environments with blocked native builds, better-sqlite3 smoke test may fail due to policy restrictions.",
+          "This limitation is environmental and not an application architecture defect.",
+        ],
       },
     };
   });

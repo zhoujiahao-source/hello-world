@@ -70,6 +70,26 @@ function main() {
     }
   }
 
+  const distManifestPath = path.join(appRoot, "dist-portable", "manifest.json");
+  if (fs.existsSync(distManifestPath)) {
+    const distManifest = JSON.parse(fs.readFileSync(distManifestPath, "utf8")) as {
+      artifacts?: { serverEntry?: string; webDist?: string; defaultConfig?: string };
+      checksums?: Record<string, string>;
+    };
+    const artifacts = [
+      distManifest.artifacts?.serverEntry,
+      distManifest.artifacts?.defaultConfig,
+    ].filter((v): v is string => Boolean(v));
+    for (const rel of artifacts) {
+      const abs = path.join(appRoot, "dist-portable", rel);
+      if (!fs.existsSync(abs)) {
+        throw new Error(`dist-portable manifest artifact missing: ${rel}`);
+      }
+      const expected = distManifest.checksums?.[rel];
+      if (expected) ensureVerified(abs, expected, `manifest artifact ${rel}`);
+    }
+  }
+
   console.log("All runtime/provider archives are present and checksum verified.");
 }
 

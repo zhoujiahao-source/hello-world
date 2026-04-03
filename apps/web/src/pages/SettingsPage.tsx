@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/client.js";
-import type { Setting } from "../api/types.js";
+import type { Setting, RuntimeInfoResponse } from "../api/types.js";
 import { Loading } from "../components/common/Loading.js";
+import { JsonView } from "../components/common/JsonView.js";
 
 export function SettingsPage() {
   const qc = useQueryClient();
@@ -12,6 +13,10 @@ export function SettingsPage() {
   const { data: settings, isLoading } = useQuery({
     queryKey: ["settings"],
     queryFn: () => api.get<Setting[]>("/settings"),
+  });
+  const runtimeQ = useQuery({
+    queryKey: ["runtime-info"],
+    queryFn: () => api.get<RuntimeInfoResponse>("/runtime-info"),
   });
 
   const upsert = useMutation({
@@ -58,6 +63,20 @@ export function SettingsPage() {
             {!settings?.length && <p className="text-gray-600 text-xs">No settings configured</p>}
           </div>
         )}
+      </div>
+
+      <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 space-y-3">
+        <h2 className="text-sm font-semibold text-gray-400">Portable Bundle Metadata</h2>
+        {!runtimeQ.data?.manifest?.exists && (
+          <div className="text-xs text-yellow-400">manifest.json is missing.</div>
+        )}
+        {runtimeQ.data?.manifest?.exists && !runtimeQ.data?.manifest?.valid && (
+          <div className="text-xs text-yellow-400">manifest.json exists but is incomplete/invalid.</div>
+        )}
+        <div className="text-xs text-gray-500">Runtime mode: {runtimeQ.data?.runtime.mode ?? "-"}</div>
+        <div className="text-xs text-gray-500 truncate">Bundle root: {runtimeQ.data?.runtime.bundleRoot ?? "-"}</div>
+        <div className="text-xs text-gray-500 truncate">Manifest path: {runtimeQ.data?.manifest.path ?? "-"}</div>
+        <JsonView data={runtimeQ.data?.manifest?.manifest ?? {}} maxHeight="260px" />
       </div>
     </div>
   );

@@ -5,10 +5,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 export APP_ROOT
+export APP_BUNDLE_ROOT="$APP_ROOT"
 export APP_DATA_DIR="${APP_DATA_DIR:-${APP_ROOT}/portable-data}"
 export APP_PORT="${APP_PORT:-4000}"
 export VITE_PORT="${VITE_PORT:-5173}"
 export VITE_API_BASE_URL="${VITE_API_BASE_URL:-http://localhost:${APP_PORT}}"
+export APP_RUNTIME_MODE="portable"
 
 echo "==================================="
 echo "  USB AI Workbench (Portable)"

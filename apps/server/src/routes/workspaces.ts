@@ -5,6 +5,7 @@ import {
 import { createWorkspaceSchema, updateWorkspaceSchema } from "@usb-ai-workbench/shared";
 import { NotFoundError, ValidationError } from "../utils/errors.js";
 import { ZodError } from "zod";
+import { getWorkspaceDiff } from "../services/internalDiff.js";
 
 export async function workspaceRoutes(app: FastifyInstance): Promise<void> {
   app.get("/workspaces", async () => {
@@ -46,5 +47,12 @@ export async function workspaceRoutes(app: FastifyInstance): Promise<void> {
     const ok = deleteWorkspace(req.params.id);
     if (!ok) throw new NotFoundError("Workspace", req.params.id);
     return { success: true, data: null };
+  });
+
+  app.get<{ Params: { id: string } }>("/workspaces/:id/diff", async (req) => {
+    const workspace = getWorkspaceById(req.params.id);
+    if (!workspace) throw new NotFoundError("Workspace", req.params.id);
+    const diff = await getWorkspaceDiff(workspace.path);
+    return { success: true, data: diff };
   });
 }

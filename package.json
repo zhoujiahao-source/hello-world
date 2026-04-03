@@ -19,7 +19,9 @@
     "portable:build-bundle": "tsx scripts/build-portable-bundle.ts",
     "portable:package": "tsx scripts/package-portable.ts",
     "portable:build": "pnpm portable:fetch-runtime && pnpm portable:fetch-providers && pnpm portable:verify && pnpm portable:build-bundle && pnpm portable:package",
-    "portable:launch": "tsx scripts/launch-portable.ts"
+    "portable:launch": "tsx scripts/launch-portable.ts",
+    "portable:smoke": "tsx scripts/portable-smoke.ts",
+    "portable:doctor": "tsx scripts/doctor.ts"
   },
   "devDependencies": {
     "esbuild": "^0.28.0",

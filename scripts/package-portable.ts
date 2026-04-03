@@ -28,6 +28,9 @@ function main() {
 
   fs.cpSync(path.join(bundleRoot, "app"), path.join(targetBundleRoot, "app"), { recursive: true });
   fs.cpSync(path.join(bundleRoot, "config"), path.join(targetBundleRoot, "config"), { recursive: true });
+  if (fs.existsSync(path.join(bundleRoot, "manifest.json"))) {
+    fs.cpSync(path.join(bundleRoot, "manifest.json"), path.join(targetBundleRoot, "manifest.json"));
+  }
   fs.cpSync(path.join(bundleRoot, "portable-data"), path.join(targetBundleRoot, "portable-data"), {
     recursive: true,
   });

@@ -6,6 +6,15 @@ import type { Workspace, Session } from "../api/types.js";
 import { Loading } from "../components/common/Loading.js";
 import { ENGINE_KINDS } from "@usb-ai-workbench/shared";
 import { Link } from "react-router-dom";
+import { JsonView } from "../components/common/JsonView.js";
+
+interface WorkspaceDiff {
+  provider: "git" | "internal";
+  diff: string;
+  files: string[];
+  truncated: boolean;
+  warnings: string[];
+}
 
 export function WorkspaceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +29,11 @@ export function WorkspaceDetailPage() {
   const { data: sessions } = useQuery({
     queryKey: ["sessions", id],
     queryFn: () => api.get<Session[]>(`/sessions?workspaceId=${id}`),
+  });
+  const { data: diffInfo, refetch: refetchDiff } = useQuery({
+    queryKey: ["workspace-diff", id],
+    queryFn: () => api.get<WorkspaceDiff>(`/workspaces/${id}/diff`),
+    enabled: !!id,
   });
 
   const createSession = useMutation({
@@ -67,6 +81,26 @@ export function WorkspaceDetailPage() {
           ))}
           {!sessions?.length && <p className="text-gray-600 text-xs">No sessions yet</p>}
         </div>
+      </div>
+
+      <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-400">Workspace Diff</h2>
+          <button
+            onClick={() => void refetchDiff()}
+            className="px-3 py-1 text-xs bg-gray-800 hover:bg-gray-700 rounded"
+          >
+            Refresh diff
+          </button>
+        </div>
+        <div className="text-xs text-gray-500">provider: {diffInfo?.provider ?? "-"}</div>
+        {diffInfo?.warnings?.map((w) => (
+          <div key={w} className="text-xs text-yellow-400">{w}</div>
+        ))}
+        <JsonView data={{ files: diffInfo?.files ?? [], truncated: diffInfo?.truncated ?? false }} maxHeight="120px" />
+        <pre className="bg-gray-950 border border-gray-800 rounded p-3 text-xs text-gray-300 overflow-auto max-h-[320px]">
+          {diffInfo?.diff ?? "No diff available"}
+        </pre>
       </div>
     </div>
   );

@@ -1,0 +1,20 @@
+node_modules/
+dist/
+build/
+.env
+*.env.local
+# Portable data (runtime)
+portable-data/db/*
+portable-data/logs/*.log
+portable-data/runs/*
+portable-data/artifacts/*
+portable-data/cache/*
+portable-data/temp/*
+portable-data/state/**
+portable-data/state/*
+# Keep .gitkeep files
+!portable-data/**/.gitkeep
+.DS_Store
+*.log
+tsconfig.tsbuildinfo
+coverage/

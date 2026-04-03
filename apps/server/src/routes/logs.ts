@@ -22,6 +22,12 @@ export async function logRoutes(app: FastifyInstance): Promise<void> {
   app.get<{ Params: { name: string } }>("/logs/:name", async (req, reply) => {
     const safeName = path.basename(req.params.name);
     const logPath = path.join(logsDir, safeName);
+    // Verify the resolved path is within logsDir (defense against symlink attacks)
+    const resolvedLogPath = path.resolve(logPath);
+    const resolvedLogsDir = path.resolve(logsDir);
+    if (!resolvedLogPath.startsWith(resolvedLogsDir + path.sep) && resolvedLogPath !== resolvedLogsDir) {
+      throw new NotFoundError("Log file", safeName);
+    }
     if (!fs.existsSync(logPath)) throw new NotFoundError("Log file", safeName);
     const tail = parseInt((req.query as Record<string, string>)["tail"] ?? "100", 10);
     const content = fs.readFileSync(logPath, "utf8");

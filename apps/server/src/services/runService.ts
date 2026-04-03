@@ -1,10 +1,11 @@
 import path from "node:path";
 import fs from "node:fs";
 import { v4 as uuidv4 } from "uuid";
-import { runsDir } from "../paths.js";
+import { runsDir, workspacesDir } from "../paths.js";
 import { createRun, updateRunStatus, setRunLogPath, getRunById } from "../repositories/runsRepo.js";
 import { addMessage } from "../repositories/messagesRepo.js";
 import { updateSessionStatus, getSessionById } from "../repositories/sessionsRepo.js";
+import { getWorkspaceById } from "../repositories/workspacesRepo.js";
 import { getAdapter } from "./engineDiscovery.js";
 import { broadcastRunEvent, broadcastSessionEvent } from "../sse.js";
 import { SSE_EVENTS } from "@usb-ai-workbench/shared";
@@ -34,7 +35,9 @@ export async function startRun(sessionId: string, engineKind: EngineKind, prompt
   updateRunStatus(run.id, "running");
   broadcastRunEvent(run.id, SSE_EVENTS.RUN_STATUS, { runId: run.id, status: "running" });
 
-  const cwd = session.workspaceId ? path.join(path.dirname(runsDir), "workspaces") : runsDir;
+  // Use the workspace's actual path as the CWD, falling back to workspacesDir
+  const workspace = getWorkspaceById(session.workspaceId);
+  const cwd = workspace?.path && fs.existsSync(workspace.path) ? workspace.path : workspacesDir;
 
   try {
     const child = await adapter.startRun({

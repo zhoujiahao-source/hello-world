@@ -37,8 +37,10 @@ export async function runCommand(
 export async function which(command: string): Promise<string | null> {
   const result = await runCommand("which", [command]);
   if (result.exitCode === 0) return result.stdout.trim();
-  // Try 'where' on Windows
-  const result2 = await runCommand("where", [command]);
-  if (result2.exitCode === 0) return result2.stdout.split("\n")[0]?.trim() ?? null;
+  // Try 'where' on Windows only
+  if (process.platform === "win32") {
+    const result2 = await runCommand("where", [command]);
+    if (result2.exitCode === 0) return result2.stdout.split("\n")[0]?.trim() ?? null;
+  }
   return null;
 }

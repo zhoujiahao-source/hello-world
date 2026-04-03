@@ -6,6 +6,8 @@ import { NotFoundError, ValidationError } from "../utils/errors.js";
 import { ZodError } from "zod";
 import { addSseClient, removeSseClient } from "../sse.js";
 import { v4 as uuidv4 } from "uuid";
+import { listArtifactsByRun } from "../repositories/artifactsRepo.js";
+import fs from "node:fs";
 
 export async function runRoutes(app: FastifyInstance): Promise<void> {
   app.get("/runs/recent", async (req) => {
@@ -33,6 +35,25 @@ export async function runRoutes(app: FastifyInstance): Promise<void> {
     const run = getRunById(req.params.id);
     if (!run) throw new NotFoundError("Run", req.params.id);
     return { success: true, data: run };
+  });
+
+  app.get<{ Params: { id: string } }>("/runs/:id/artifacts", async (req) => {
+    const run = getRunById(req.params.id);
+    if (!run) throw new NotFoundError("Run", req.params.id);
+    return { success: true, data: listArtifactsByRun(req.params.id) };
+  });
+
+  app.get<{ Params: { id: string } }>("/runs/:id/diff", async (req) => {
+    const run = getRunById(req.params.id);
+    if (!run) throw new NotFoundError("Run", req.params.id);
+    const artifacts = listArtifactsByRun(req.params.id);
+    const summary = artifacts.find((a) => a.name === "diff-summary.json");
+    const patch = artifacts.find((a) => a.name === "diff.patch");
+    const summaryJson = summary && fs.existsSync(summary.path)
+      ? JSON.parse(fs.readFileSync(summary.path, "utf8")) as Record<string, unknown>
+      : null;
+    const patchText = patch && fs.existsSync(patch.path) ? fs.readFileSync(patch.path, "utf8") : "";
+    return { success: true, data: { source: (summaryJson?.source as string | undefined) ?? "unavailable", summary: summaryJson, patch: patchText, artifacts } };
   });
 
   // SSE stream for run output

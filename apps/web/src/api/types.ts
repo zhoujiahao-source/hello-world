@@ -72,3 +72,26 @@ export interface HealthResponse {
   limitations?: string[];
   config: { port: number };
 }
+
+export interface ArtifactRecord {
+  id: string;
+  runId: string;
+  name: string;
+  path: string;
+  mimeType: string | null;
+  sizeBytes: number;
+  createdAt: string;
+}
+
+export interface RunDiffResponse {
+  source: "git-native" | "internal-diff" | "unavailable";
+  summary: {
+    source: "git-native" | "internal-diff" | "unavailable";
+    addedFiles: string[];
+    modifiedFiles: string[];
+    deletedFiles: string[];
+    warnings: string[];
+  } | null;
+  patch: string;
+  artifacts: ArtifactRecord[];
+}

@@ -1,0 +1,106 @@
+#!/usr/bin/env tsx
+/**
+ * USB AI Workbench — Doctor script
+ * Checks system requirements and configuration.
+ */
+
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const APP_ROOT = path.resolve(__dirname, "..");
+
+interface CheckResult {
+  name: string;
+  status: "ok" | "warn" | "error";
+  message: string;
+}
+
+const results: CheckResult[] = [];
+
+function check(name: string, fn: () => string): void {
+  try {
+    const msg = fn();
+    results.push({ name, status: "ok", message: msg });
+  } catch (err) {
+    results.push({ name, status: "error", message: String(err) });
+  }
+}
+
+function warn(name: string, fn: () => string): void {
+  try {
+    const msg = fn();
+    results.push({ name, status: "ok", message: msg });
+  } catch (err) {
+    results.push({ name, status: "warn", message: String(err) });
+  }
+}
+
+// Node.js version
+check("Node.js >= 20", () => {
+  const v = process.version;
+  const major = parseInt(v.slice(1).split(".")[0]!, 10);
+  if (major < 20) throw new Error(`Found ${v}, need >= 20`);
+  return v;
+});
+
+// pnpm
+check("pnpm installed", () => {
+  return execSync("pnpm --version", { encoding: "utf8" }).trim();
+});
+
+// Directories
+check("portable-data directory writable", () => {
+  const dir = path.join(APP_ROOT, "portable-data");
+  fs.mkdirSync(dir, { recursive: true });
+  const testFile = path.join(dir, ".write-test");
+  fs.writeFileSync(testFile, "test");
+  fs.unlinkSync(testFile);
+  return dir;
+});
+
+// Engines
+for (const engine of ["claude", "codex", "opencode"]) {
+  warn(`Engine: ${engine}`, () => {
+    execSync(`which ${engine}`, { encoding: "utf8", stdio: "pipe" });
+    return "found in PATH";
+  });
+}
+
+// API keys
+warn("ANTHROPIC_API_KEY", () => {
+  if (!process.env.ANTHROPIC_API_KEY) throw new Error("not set (needed for Claude)");
+  return "set";
+});
+
+warn("OPENAI_API_KEY", () => {
+  if (!process.env.OPENAI_API_KEY) throw new Error("not set (needed for Codex)");
+  return "set";
+});
+
+// Config
+check("config/default.yaml exists", () => {
+  const cfgPath = path.join(APP_ROOT, "config", "default.yaml");
+  if (!fs.existsSync(cfgPath)) throw new Error(`Missing: ${cfgPath}`);
+  return cfgPath;
+});
+
+// Print results
+console.log("\n=== USB AI Workbench Doctor ===\n");
+let hasError = false;
+for (const r of results) {
+  const icon = r.status === "ok" ? "✓" : r.status === "warn" ? "⚠" : "✗";
+  const color = r.status === "ok" ? "\x1b[32m" : r.status === "warn" ? "\x1b[33m" : "\x1b[31m";
+  console.log(`${color}${icon}\x1b[0m  ${r.name}: ${r.message}`);
+  if (r.status === "error") hasError = true;
+}
+console.log("");
+
+if (hasError) {
+  console.error("Some checks failed. Please fix the errors above.");
+  process.exit(1);
+} else {
+  console.log("All critical checks passed.");
+}

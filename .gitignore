@@ -3,12 +3,17 @@ dist/
 build/
 .env
 *.env.local
-portable-data/db/
-portable-data/logs/
-portable-data/runs/
-portable-data/artifacts/
-portable-data/cache/
-portable-data/temp/
+# Portable data (runtime)
+portable-data/db/*
+portable-data/logs/*.log
+portable-data/runs/*
+portable-data/artifacts/*
+portable-data/cache/*
+portable-data/temp/*
+portable-data/state/**
+portable-data/state/*
+# Keep .gitkeep files
+!portable-data/**/.gitkeep
 .DS_Store
 *.log
 tsconfig.tsbuildinfo
